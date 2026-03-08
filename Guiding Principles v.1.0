@@ -1,10 +1,9 @@
-
-Guiding Principles v.1.0
 Gr4Ig — Guiding Principles
-v.1.0 — 2026-03-08
+Version 1.1 — 2026-03-08
+Status: Stable
 
 1. The Computer Serves the Human, Not the Reverse
-The system exists to eliminate friction between the user and their work. Every architectural decision should be evaluated against this: does it reduce the cognitive load on the user, or does it transfer complexity to them? Complexity that cannot be eliminated must be absorbed by the system, not delegated upward.
+The experience adapts to the human, not the other way around. Every architectural decision should be evaluated against this: does it reduce the cognitive load on the user, or does it transfer complexity to them? Complexity that cannot be eliminated must be absorbed by the system, not delegated upward.
 
 2. Flow Is the Organizing Principle
 Work is not a collection of discrete tasks. It is a continuous, branching flow of thought and action. The system is organized around enabling and sustaining that flow — predicting where it goes next, removing obstacles before they appear, and supporting forks and returns without losing context. The window-and-application paradigm is explicitly rejected as a relic of task-centric computing.
@@ -19,13 +18,18 @@ The system maintains continuous awareness of the user's context — what they ar
 Information is never siloed by the tool that created it. All data lives in a shared, semantically rich store that is owned entirely by the user and accessible across every service. Portability is not a migration feature — it is the baseline. No component may treat data as its own.
 
 6. Intelligence Is Infrastructure
-The cognitive layer is not an assistant sitting above the system. It is woven into the foundation — driving the interface, informing the flow engine, deepening the user relationship, and operating continuously in the background. AI is not a feature of Gr4Ig. It is the nervous system.
+The cognitive layer is not an assistant sitting above the system. It is woven into the foundation — driving the experience, informing the flow engine, deepening the user relationship, and operating continuously in the background. AI is not a feature of Gr4Ig. It is the nervous system.
 
 7. Predict, Prepare, Present
 The system does not wait to be asked. It reasons ahead of the user's current position in their flow, prepares what will likely be needed next, and presents it at the moment it becomes relevant. Reactive assistance is a fallback, not the design target.
 
-8. Voice Is a First-Class Interface
-Speech is not an alternative input method bolted onto a keyboard-centric system. Voice interaction is designed in from the foundation — ambient, interruptible, and capable of operating in parallel with other activity. The keyboard is one interface among several, not the default.
+8. Voice Is a First-Class Interaction
+Speech is not an alternative input method bolted onto a keyboard-centric system. Voice interaction is designed in from the foundation — ambient, interruptible, and capable of operating in parallel with other activity. The keyboard is one interaction mode among several, not the default.
 
 9. Open at Every Layer
 Gr4Ig is free and open source from the kernel up. No component may introduce a dependency that compromises the user's full ownership of their environment — no data harvesting, no subscription gates, no corporate incentives embedded in the stack. Longevity and community are the goals. The architecture must be legible and extensible to contributors who arrive after the foundation is laid.
+
+10. Simple Components, Emergent Capability
+The system is built on the Unix philosophy — small, sharp components with clean interfaces. Complexity emerges from composition, not from monolithic design. Any component should be replaceable without requiring the system to be redesigned. The architecture is the asset, not any specific implementation.
+
+This document is a living record. Update as understanding develops.
