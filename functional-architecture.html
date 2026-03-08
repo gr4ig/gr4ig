@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gr4Ig — Functional Architecture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --text: #e8e0d4;
+      --subtle: #4a4540;
+      --accent: #C4956A;
+      --accent-dim: #8a6a4a;
+      --surface: #12141a;
+      --border: #2a2520;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, 'Times New Roman', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+    }
+
+    .mono { font-family: 'Courier New', monospace; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      max-width: 700px;
+      width: 100%;
+    }
+    .header .eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      color: #f0e8dc;
+    }
+    .header p {
+      font-size: 14px;
+      color: #8a7e72;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* Sections */
+    .section {
+      max-width: 860px;
+      width: 100%;
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .section-header {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .section-header .eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .section-header .subtitle {
+      font-size: 13px;
+      color: #8a7e72;
+      font-style: italic;
+    }
+
+    /* Paradigm */
+    .paradigm-body { padding: 28px 32px; background: var(--surface); }
+    .paradigm-body p {
+      font-size: 13px;
+      color: #b0a898;
+      line-height: 1.85;
+      margin-bottom: 20px;
+    }
+    .paradigm-body p.highlight {
+      font-size: 15px;
+      color: #e8d5b0;
+      font-style: italic;
+      padding-left: 20px;
+      border-left: 2px solid var(--accent);
+    }
+
+    /* Compact */
+    .compact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 640px) { .compact-grid { grid-template-columns: 1fr; } }
+    .compact-col {
+      padding: 28px 32px;
+    }
+    .compact-col:first-child { border-right: 1px solid var(--border); }
+    .compact-col .col-label {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .compact-col.promises .col-label { color: #7B9E87; }
+    .compact-col.requires .col-label { color: var(--accent); }
+    .compact-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .compact-item .arrow {
+      font-size: 14px;
+      line-height: 1;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .compact-col.promises .arrow { color: #7B9E87; }
+    .compact-col.requires .arrow { color: var(--accent-dim); }
+    .compact-item p {
+      font-size: 13px;
+      color: #b0a898;
+      line-height: 1.7;
+    }
+
+    /* Diagram section */
+    .diagram-intro {
+      max-width: 860px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+    .diagram-intro .eyebrow {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .diagram-intro p {
+      font-size: 13px;
+      color: #8a7e72;
+      font-style: italic;
+    }
+
+    /* Diagram layout */
+    .diagram-layout {
+      display: flex;
+      gap: 60px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    svg { flex-shrink: 0; }
+    svg circle { transition: all 0.2s ease; }
+    svg circle.clickable { cursor: pointer; }
+    svg text { user-select: none; }
+
+    /* Detail panel */
+    .detail-panel {
+      flex: 1;
+      min-width: 280px;
+      max-width: 400px;
+      padding-top: 40px;
+    }
+    .detail-panel .hint {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--subtle);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+    .layer-list { border-left: 2px solid var(--subtle); padding-left: 20px; }
+    .layer-list-item {
+      margin-bottom: 16px;
+      cursor: pointer;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(74,69,64,0.13);
+    }
+    .layer-list-item:hover .layer-list-name { opacity: 0.8; }
+    .layer-list-name {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      margin-bottom: 4px;
+    }
+    .layer-list-sub { font-size: 12px; color: #8a7e72; font-style: italic; }
+
+    /* Layer detail */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--subtle);
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      padding: 0 0 24px 0;
+      text-transform: uppercase;
+      display: block;
+    }
+    .back-btn:hover { color: var(--accent); }
+    .layer-title {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .layer-narrative {
+      font-size: 13px;
+      color: #b0a898;
+      line-height: 1.8;
+      font-style: italic;
+      margin-bottom: 32px;
+      padding-left: 16px;
+    }
+    .components-label {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--subtle);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .component-card {
+      margin-bottom: 20px;
+      padding: 16px;
+      border-radius: 2px;
+    }
+    .component-name {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+    .component-desc { font-size: 12px; color: #9a8e82; line-height: 1.7; }
+
+    /* Footer */
+    .footer {
+      margin-top: 60px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--subtle);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="eyebrow">Gr4Ig — Functional Architecture v0.2</div>
+    <h1>The Living System</h1>
+    <p>A free, open source, AI-driven personal operating environment — built from the kernel up.</p>
+  </div>
+
+  <!-- Paradigm Shift -->
+  <div class="section">
+    <div class="section-header">
+      <div class="eyebrow">A Paradigm Shift</div>
+      <div class="subtitle">This must be understood before the first line of code is written.</div>
+    </div>
+    <div class="paradigm-body">
+      <p>Every computing paradigm before Gr4Ig has been built on the same implicit contract: the user manages the machine. More capable machines required more capable management. More tools required more context switching. More complexity required more cognitive overhead. The user's attention became the scarcest resource in knowledge work — and the computer consumed it.</p>
+      <p class="highlight">Gr4Ig rejects that contract entirely.</p>
+      <p>The window-and-application model is not a neutral design choice — it is the physical expression of a task-centric theory of work that no longer reflects how people actually think, create, or operate. It fragments flow. It isolates context. It taxes the user continuously for the privilege of using the tool.</p>
+      <p>Gr4Ig is organized around a flow-based theory of work. Work is not a collection of discrete tasks executed in separate applications. It is a continuous, branching river of thought and action — context-rich, nonlinear, and deeply personal. The system's job is to understand that flow, enable it, and stay out of its way.</p>
+      <p style="margin-bottom:0">The shift this requires from the user is real: relinquishing the control that previous systems demanded. In exchange, the user recovers something more valuable — the freedom to think, create, and innovate without the machine demanding management. The computer stops being an obstacle and becomes, for the first time, a genuine partner.</p>
+    </div>
+  </div>
+
+  <!-- User Compact -->
+  <div class="section" style="margin-bottom:60px">
+    <div class="section-header">
+      <div class="eyebrow">The User Compact</div>
+      <div class="subtitle">What the system commits to the user. What the relationship requires in return.</div>
+    </div>
+    <div class="compact-grid">
+      <div class="compact-col promises">
+        <div class="col-label">What the system commits</div>
+        <div class="compact-item"><span class="arrow">→</span><p>The system will carry the cognitive overhead you have always carried alone.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>It will remember what you cannot hold in mind simultaneously.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>It will anticipate what you need before you know you need it.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>It will grow more capable the longer you work together.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>It will never harvest your data, gate your environment, or serve any interest but yours.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>Your work, your context, and your relationship with the system belong entirely to you.</p></div>
+      </div>
+      <div class="compact-col requires">
+        <div class="col-label">What the relationship requires</div>
+        <div class="compact-item"><span class="arrow">→</span><p>You will need to release some control — not your judgment or your agency, but the exhausting habit of managing the machine.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>Early in the relationship, the system will know little. Trust the arc, not just the moment.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>The partnership deepens through use. The system cannot know you without working with you.</p></div>
+        <div class="compact-item"><span class="arrow">→</span><p>Your role is to think, create, decide, and direct. The system's role is everything else.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagram intro -->
+  <div class="diagram-intro">
+    <div class="eyebrow">Functional Architecture</div>
+    <p>Six layers. One coherent system. Select any ring to explore the components and narrative.</p>
+  </div>
+
+  <!-- Diagram + panel -->
+  <div class="diagram-layout">
+    <svg id="diagram" width="600" height="600" viewBox="0 0 600 600"></svg>
+    <div class="detail-panel" id="detail-panel">
+      <div class="hint">Select a layer to explore</div>
+      <div class="layer-list" id="layer-list"></div>
+    </div>
+  </div>
+
+  <div class="footer">GR4IG — FUNCTIONAL ARCHITECTURE v0.2 — 2026-03-08</div>
+
+<script>
+const layers = [
+  {
+    id: "user", label: "USER", sublabel: "The human the system serves",
+    radius: 280, color: "#E8D5B0", textColor: "#1a1208", ringColor: "#E8D5B0",
+  },
+  {
+    id: "experience", label: "EXPERIENCE LAYER", sublabel: "The surface the user touches",
+    radius: 230, color: "#C4956A", textColor: "#fff", ringColor: "#C4956A",
+    components: [
+      { name: "Visual Surface", desc: "The adaptive, context-driven workspace. Not a window manager — a living canvas that reshapes continuously based on the user's current flow state. No windows. No application boundaries. A unified surface that serves the work." },
+      { name: "Voice Interface", desc: "First-class ambient speech I/O. Interruptible, parallel to other activity, and deeply integrated — not a microphone button bolted onto a keyboard-centric system. Voice is a native mode of interaction, not an alternative one." },
+      { name: "Flow Navigator", desc: "The visible representation of the user's current flow — where they are, where they've been, where the system predicts they're going. Forks and returns are native, not workarounds. The user is never lost in their own work." },
+    ],
+    narrative: "The Experience Layer is the only part of the system the user directly perceives. It is generated and reshaped in real time by the layers beneath it — never configured once and left static. Its sole obligation is to surface exactly what is needed, at the moment it is needed, with zero unnecessary friction. The experience is not designed for average moments. It is designed for this moment."
+  },
+  {
+    id: "cognitive", label: "COGNITIVE & FLOW LAYER", sublabel: "Reasoning, prediction, intent, partnership",
+    radius: 175, color: "#7B9E87", textColor: "#fff", ringColor: "#7B9E87",
+    components: [
+      { name: "Cognitive Engine", desc: "Reasons over context signals to derive intent at three horizons: immediate (what am I doing now), session (what am I accomplishing today), and project (what am I working toward). Responds to commands — and reasons far beyond them. The brain of the system." },
+      { name: "Flow Engine", desc: "Maintains a continuously updated model of the user's work flow. Predicts next states, prepares resources before they are needed, and manages forks and returns without losing context. The user's flow is never interrupted by the system — only enabled by it. The most novel component in the architecture." },
+      { name: "User Relationship Model", desc: "The system's growing knowledge of the user — their patterns, working style, priorities, and obligations. Never declared, never frozen. Continuously observed, inferred, and revised. The longer the relationship, the more capable the system becomes. This is what transforms a tool into a partner." },
+    ],
+    narrative: "The Cognitive & Flow Layer is where Gr4Ig diverges most sharply from every previous computing system. It does not only respond to commands — it reasons ahead of the user's current position, anticipates needs before they are expressed, and continuously deepens its understanding of who the user is and how they work. This layer is the seat of the collaborative partnership between user and system. The user brings intent, judgment, and creativity. The system brings memory, anticipation, and context. Over time, as the relationship deepens, the system requires fewer commands because it already knows — and the user is freed to think, create, and move without the machine demanding management."
+  },
+  {
+    id: "orchestration", label: "ORCHESTRATION FABRIC", sublabel: "The hub — connective tissue",
+    radius: 120, color: "#4A6FA5", textColor: "#fff", ringColor: "#4A6FA5",
+    components: [
+      { name: "Event Bus", desc: "The nervous system of signal transmission. All context signals, state changes, and inter-component messages move through here. High-throughput, low-latency, no bottlenecks. The speed of the fabric is the speed of the system." },
+      { name: "Service Mesh", desc: "Manages the lifecycle, discovery, and communication of all system services. Ensures composable components behave as one coherent system rather than a collection of parts. Composability is only meaningful if the mesh is invisible." },
+      { name: "State Coordinator", desc: "Maintains coherence across the system at all times. When context changes, the State Coordinator ensures every dependent component is updated consistently and in the right order. Coherence is not a feature — it is the baseline." },
+    ],
+    narrative: "The Orchestration Fabric is the hub that everything speaks through — the most structurally critical layer in the system and the least visible to the user. It moves signals with precision and speed, maintains state coherence across all components, and ensures the system behaves as a single integrated thing rather than a collection of parts negotiating with each other. This is where many OS-level projects fail: individual components work, but the fabric between them is an afterthought that becomes a bottleneck. In Gr4Ig the fabric is a first-class architectural concern from the beginning. Everything above it depends on it being fast, coherent, and invisible."
+  },
+  {
+    id: "data", label: "DATA & MEMORY LAYER", sublabel: "The persistent foundation",
+    radius: 68, color: "#2D4A3E", textColor: "#a8c5b5", ringColor: "#4a8a70",
+    components: [
+      { name: "Semantic Store", desc: "A unified, searchable knowledge base for all user data. Supports both explicit retrieval (find what I know I need) and inference-driven surfacing (find what I don't know I need). No data silo may exist above this layer. All data belongs to the user." },
+      { name: "Context Stream", desc: "A continuous, time-ordered record of context signals — calendar state, task load, communications, activity patterns. The raw material the Cognitive Engine reasons over. The richer the stream, the more accurate the partnership." },
+      { name: "Relationship Memory", desc: "The persistent substrate of the system's growing knowledge of the user. Long-lived, carefully maintained, and treated as a first-class asset. Loss or corruption here does not break a feature — it damages the relationship. Continuity here is non-negotiable." },
+    ],
+    narrative: "The Data & Memory Layer is the foundation everything builds on. All user data lives here — never siloed by the service that created it, always owned entirely by the user. The semantic store supports both known retrieval and unknown discovery. The relationship memory is what accumulates over time and makes the system genuinely more capable the longer it is used. This layer is not infrastructure in the background sense — it is the substance of the user relationship, persisted. Its integrity is as important as any other system property."
+  },
+  {
+    id: "hardware", label: "HARDWARE ABSTRACTION", sublabel: "Boundary with physical reality",
+    radius: 20, color: "#1a1a2e", textColor: "#888", ringColor: "#555",
+    components: [
+      { name: "Kernel & Drivers", desc: "Linux kernel and hardware drivers. Largely inherited, not built. Presents a clean, stable surface to everything above. The goal is maximum leverage of existing open source infrastructure — Gr4Ig builds on this layer, not against it." },
+      { name: "Resource Manager", desc: "CPU, memory, storage, and network allocation. Ensures inference, orchestration, and experience rendering coexist without resource contention — especially critical on single-host deployments where all layers share the same hardware." },
+      { name: "Inference Runtime", desc: "The local AI inference engine. A dedicated concern at this layer because inference throughput is a first-class architectural constraint — the entire adaptive system depends on it keeping pace with continuous context changes. Latency here propagates upward through every layer." },
+    ],
+    narrative: "The Hardware Abstraction Layer is the boundary between Gr4Ig and physical reality. Most of this is inherited from Linux — kernel, drivers, and resource management are well-solved problems that the project leverages rather than rebuilds. The novel concern here is the inference runtime: local AI inference is a hard real-time requirement for this system, not a background task. Its resource demands must be managed at this layer so the layers above can treat intelligence as a reliable, low-latency service. The single-host deployment target is a first-class constraint that this layer must satisfy."
+  },
+];
+
+const cx = 300, cy = 300;
+const svg = document.getElementById('diagram');
+const NS = 'http://www.w3.org/2000/svg';
+let selected = null;
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+// Defs
+const defs = el('defs', {}, svg);
+layers.forEach(layer => {
+  const g = el('radialGradient', { id: `grad-${layer.id}`, cx: '50%', cy: '50%', r: '50%' }, defs);
+  const s1 = el('stop', { offset: '0%', 'stop-color': layer.color, 'stop-opacity': '0.15' }, g);
+  const s2 = el('stop', { offset: '100%', 'stop-color': layer.color, 'stop-opacity': '0.05' }, g);
+});
+
+// Spoke lines
+for (let deg = 0; deg < 360; deg += 60) {
+  const rad = deg * Math.PI / 180;
+  el('line', {
+    x1: cx + 20 * Math.cos(rad), y1: cy + 20 * Math.sin(rad),
+    x2: cx + 278 * Math.cos(rad), y2: cy + 278 * Math.sin(rad),
+    stroke: '#4a4540', 'stroke-width': '0.5', 'stroke-dasharray': '2,4', opacity: '0.3'
+  }, svg);
+}
+
+// Rings (outside in)
+const ringEls = {};
+[...layers].reverse().forEach(layer => {
+  const circle = el('circle', {
+    cx, cy, r: layer.radius,
+    fill: `url(#grad-${layer.id})`,
+    stroke: layer.ringColor,
+    'stroke-width': '1',
+    'stroke-opacity': '0.4',
+  }, svg);
+  if (layer.components) {
+    circle.classList.add('clickable');
+    circle.addEventListener('click', () => selectLayer(layer.id === selected ? null : layer.id));
+    circle.addEventListener('mouseenter', () => hoverLayer(layer.id, true));
+    circle.addEventListener('mouseleave', () => hoverLayer(layer.id, false));
+  }
+  ringEls[layer.id] = circle;
+});
+
+// Labels
+layers.forEach((layer, idx) => {
+  if (layer.id === 'user') return;
+  const outerRadius = layer.radius;
+  const nextLayer = layers[idx + 1];
+  const innerRadius = nextLayer ? nextLayer.radius : 0;
+  const labelRadius = (outerRadius + innerRadius) / 2;
+  const lx = cx;
+  const ly = cy - labelRadius;
+
+  const g = el('g', {}, svg);
+  if (layer.components) {
+    g.style.cursor = 'pointer';
+    g.addEventListener('click', () => selectLayer(layer.id === selected ? null : layer.id));
+    g.addEventListener('mouseenter', () => hoverLayer(layer.id, true));
+    g.addEventListener('mouseleave', () => hoverLayer(layer.id, false));
+  }
+
+  const t1 = el('text', {
+    x: lx, y: ly - 6, 'text-anchor': 'middle',
+    fill: layer.textColor,
+    'font-size': (layer.id === 'hardware' || layer.id === 'data') ? '8' : '9',
+    'font-family': "'Courier New', monospace",
+    'letter-spacing': '0.15em', 'font-weight': '600'
+  }, g);
+  t1.textContent = layer.label;
+
+  const t2 = el('text', {
+    x: lx, y: ly + 8, 'text-anchor': 'middle',
+    fill: '#8a7e72', 'font-size': '7',
+    'font-family': 'Georgia, serif', 'font-style': 'italic', opacity: '0.8'
+  }, g);
+  t2.textContent = layer.sublabel;
+});
+
+// Center label
+const kl1 = el('text', { x: cx, y: cy - 6, 'text-anchor': 'middle', fill: '#444', 'font-size': '7', 'font-family': "'Courier New', monospace", 'letter-spacing': '0.1em' }, svg);
+kl1.textContent = 'KERNEL';
+const kl2 = el('text', { x: cx, y: cy + 6, 'text-anchor': 'middle', fill: '#333', 'font-size': '6', 'font-family': 'Georgia, serif', 'font-style': 'italic' }, svg);
+kl2.textContent = 'hardware';
+
+// User label
+const ul1 = el('text', { x: cx, y: cy - 255, 'text-anchor': 'middle', fill: '#C4956A', 'font-size': '10', 'font-family': "'Courier New', monospace", 'letter-spacing': '0.25em', opacity: '0.9' }, svg);
+ul1.textContent = 'USER';
+const ul2 = el('text', { x: cx, y: cy - 242, 'text-anchor': 'middle', fill: '#8a7e72', 'font-size': '7.5', 'font-family': 'Georgia, serif', 'font-style': 'italic', opacity: '0.7' }, svg);
+ul2.textContent = 'the system exists in service';
+
+// Build layer list
+const layerList = document.getElementById('layer-list');
+layers.filter(l => l.id !== 'user').forEach(layer => {
+  const item = document.createElement('div');
+  item.className = 'layer-list-item';
+  item.dataset.id = layer.id;
+  item.innerHTML = `
+    <div class="layer-list-name" style="color:${layer.color}">${layer.label}</div>
+    <div class="layer-list-sub">${layer.sublabel}</div>
+  `;
+  item.addEventListener('click', () => selectLayer(layer.id));
+  layerList.appendChild(item);
+});
+
+function hoverLayer(id, on) {
+  if (selected) return;
+  const circle = ringEls[id];
+  if (on) {
+    circle.setAttribute('stroke-width', '2');
+    circle.setAttribute('stroke-opacity', '0.8');
+  } else {
+    circle.setAttribute('stroke-width', '1');
+    circle.setAttribute('stroke-opacity', '0.4');
+  }
+}
+
+function selectLayer(id) {
+  selected = id;
+  const panel = document.getElementById('detail-panel');
+
+  // Reset all rings
+  Object.entries(ringEls).forEach(([lid, circle]) => {
+    if (id) {
+      circle.setAttribute('opacity', lid === id ? '1' : '0.4');
+    } else {
+      circle.setAttribute('opacity', '1');
+    }
+    circle.setAttribute('stroke-width', lid === id ? '2.5' : '1');
+    circle.setAttribute('stroke-opacity', lid === id ? '1' : '0.4');
+    if (lid === id) {
+      const layer = layers.find(l => l.id === lid);
+      circle.style.filter = `drop-shadow(0 0 12px ${layer.ringColor}66)`;
+    } else {
+      circle.style.filter = 'none';
+    }
+  });
+
+  if (!id) {
+    panel.innerHTML = `
+      <div class="hint">Select a layer to explore</div>
+      <div class="layer-list" id="layer-list"></div>
+    `;
+    const ll = panel.querySelector('#layer-list');
+    layers.filter(l => l.id !== 'user').forEach(layer => {
+      const item = document.createElement('div');
+      item.className = 'layer-list-item';
+      item.innerHTML = `
+        <div class="layer-list-name" style="color:${layer.color}">${layer.label}</div>
+        <div class="layer-list-sub">${layer.sublabel}</div>
+      `;
+      item.addEventListener('click', () => selectLayer(layer.id));
+      ll.appendChild(item);
+    });
+    return;
+  }
+
+  const layer = layers.find(l => l.id === id);
+  const components = layer.components.map(c => `
+    <div class="component-card" style="background:${layer.color}0d; border:1px solid ${layer.color}22">
+      <div class="component-name" style="color:${layer.color}">${c.name}</div>
+      <div class="component-desc">${c.desc}</div>
+    </div>
+  `).join('');
+
+  panel.innerHTML = `
+    <button class="back-btn" id="back-btn">← Back</button>
+    <div class="layer-title" style="color:${layer.color}">${layer.label}</div>
+    <p class="layer-narrative" style="border-left-color:${layer.color}44">${layer.narrative}</p>
+    <div class="components-label">Components</div>
+    ${components}
+  `;
+  panel.querySelector('#back-btn').addEventListener('click', () => selectLayer(null));
+}
+</script>
+</body>
+</html>
