@@ -1,16 +1,35 @@
-## Hi there 👋
+# Gr4Ig
 
-<!--
-**gr4ig/gr4ig** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+> The interface should adapt to the human. Not the other way around.
 
-Here are some ideas to get you started:
+Gr4Ig is a free, open source, AI-driven personal operating environment 
+built from the Linux kernel up. It eliminates the cognitive cost of 
+context switching by replacing the application model with a living, 
+adaptive workspace that reshapes itself in real time based on your 
+calendar, tasks, communications, and context.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+This is not another productivity app. It is a rethinking of what an 
+operating system is.
+
+---
+
+## Status
+
+Pre-research. The problem is understood. The architecture is being 
+designed. The knowledge required to build this correctly is being 
+acquired methodically.
+
+See [FOUNDATION.md](FOUNDATION.md) for the full project vision, 
+problem statement, and open research questions.
+
+---
+
+## Philosophy
+
+Built in the tradition of Linux, PostgreSQL, and the tools it runs on. 
+Free forever. No commercial agenda. The goal is longevity and community, 
+not revenue.
+
+---
+
+*A well-planted seed outlasts its planter.*
