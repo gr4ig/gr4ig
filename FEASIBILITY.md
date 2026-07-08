@@ -51,7 +51,7 @@ The architecture comprises six layers. They are not equally difficult. Here is a
 
 Linux kernel, hardware drivers, and resource management are mature, proven technology. This layer is inherited, not built. The primary novel concern — managing resource allocation across inference, orchestration, and experience rendering on a single host — is a real engineering challenge but not a fundamental research problem. It is an optimization problem on well-understood infrastructure.
 
-The single-host deployment target is demanding but not unreasonable given hardware trajectory. The Minisforum MS-S1 Max (128GB unified memory) in the current prototype stack is meaningful early evidence that the hardware curve is moving in the right direction.
+The single-host deployment target is demanding but not unreasonable given hardware trajectory. The Minisforum MS-S1 Max (128GB unified memory) in the current prototype stack is meaningful early evidence that the hardware curve is moving in the right direction. Pythia (github.com/gr4ig/pythia, 2026-07) is measured evidence at small scale: inference, retrieval across ~0.5 TB, geographic computation, and voice consolidated on one laptop, benchmarked end to end.
 
 **Verdict:** No fundamental obstacles. Engineering effort, not research.
 
@@ -121,6 +121,8 @@ The entire adaptive system depends on AI inference keeping pace with continuous 
 
 Current local inference engines — including llama.cpp and Ollama — are not architected for this operating point. They are optimized for throughput on sequential requests, not for continuous low-latency concurrent inference. vLLM and similar systems move in the right direction but are designed for server deployments, not single-host personal computing.
 
+NVIDIA's RTX Spark platform (announced Computex 2026, shipping fall 2026) may collapse that distinction: a CUDA-capable unified-memory laptop makes vLLM-class serving — continuous batching, concurrent low-latency inference — plausible on single-host personal hardware for the first time. Quantifying this against the single-threaded engines is a defined next experiment; the Pythia benchmark harness (github.com/gr4ig/pythia) provides the baseline instrumentation and the Ollama-era numbers to compare against.
+
 This is not an insurmountable problem. Smaller, purpose-built models for specific inference tasks (intent classification, context scoring, next-state prediction) operating at lower latency than general-purpose LLMs may be the correct architecture. The inference layer may need to be a hierarchy of models at different latency/capability tradeoffs rather than a single general-purpose engine.
 
 This problem must be solved before the Experience Layer can be fully realized. It is the dependency that everything above it waits on.
@@ -175,7 +177,7 @@ Gr4Ig is explicitly designed to leverage the continued advancement of hardware c
 
 The assumption rests on three observable trends that have been consistent for years and show no signs of reversal:
 
-**Memory density and bandwidth continue to increase.** The unified memory architecture pioneered by Apple Silicon — where CPU, GPU, and Neural Engine share a single high-bandwidth memory pool — eliminates the resource contention that makes single-host AI workloads difficult on conventional hardware. This architecture is not unique to Apple. The industry is moving toward higher-bandwidth, higher-density memory as a general direction. Gr4Ig's single-host deployment target becomes more tractable with each hardware generation.
+**Memory density and bandwidth continue to increase.** The unified memory architecture pioneered by Apple Silicon — where CPU, GPU, and Neural Engine share a single high-bandwidth memory pool — eliminates the resource contention that makes single-host AI workloads difficult on conventional hardware. This architecture is not unique to Apple. NVIDIA's RTX Spark (Computex 2026) extends the same unified-memory profile to CUDA-native laptops, and the industry is moving toward higher-bandwidth, higher-density memory as a general direction. Gr4Ig's single-host deployment target becomes more tractable with each hardware generation.
 
 **Local inference performance per watt continues to improve.** The capability of models that can run on consumer hardware has increased dramatically and consistently. The gap between what requires a data center and what runs locally has been closing at a rate that justifies designing for local inference as a first-class architectural assumption. A system that is inference-constrained today may not be in two years. Gr4Ig's architecture must not make decisions that preclude leveraging this improvement.
 

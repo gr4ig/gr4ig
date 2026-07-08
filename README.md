@@ -24,6 +24,18 @@ problem statement, and open research questions.
 
 ---
 
+## Research in public
+
+The research phase produces working artifacts as it goes:
+
+- [Pythia](https://github.com/gr4ig/pythia) — a fully offline AI knowledge
+  system on a single laptop: working code, measured benchmarks, and a
+  build-your-own guide. Small-scale validation of the single-host target.
+- [The Gr4Ig papers](https://gr4ig.substack.com) — findings published as
+  they happen, warts and all.
+
+---
+
 ## Philosophy
 
 Built in the tradition of Linux, PostgreSQL, and the tools it runs on. 

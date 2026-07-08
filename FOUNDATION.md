@@ -80,6 +80,8 @@ Pre-research. The infrastructure primitives are being assembled through the Open
 
 The research phase is the work. Experiments, findings, and architectural decisions will be captured here and in Open Brain as they develop.
 
+The first validation artifact exists: [Pythia](https://github.com/gr4ig/pythia) (2026-07) — a fully offline knowledge system consolidating local inference, semantic search across ~0.5 TB of reference material, live geographic computation, and voice interaction on a single laptop, with measured results published in the *AI Data Center in a Backpack* series. It is small-scale evidence that the single-host constraint holds.
+
 ---
 
 ## Infrastructure
@@ -88,6 +90,8 @@ The research phase is the work. Experiments, findings, and architectural decisio
 The production target is a single host. All compute, inference, memory, and orchestration should eventually run on one machine. This is a significant engineering challenge today but is expected to become increasingly tractable as hardware density continues to improve. The multi-server prototype makes no assumptions that would prevent future single-host consolidation — that constraint should be treated as a first-class architectural requirement from the beginning.
 
 **Near-term hardware candidate:** Apple Silicon Mac Studio (M5 Max or Ultra, 192GB+ unified memory) represents a plausible single-host validation target. The unified memory architecture — CPU, GPU, and Neural Engine sharing a single high-bandwidth memory pool — eliminates the resource contention that makes single-host consolidation difficult on conventional hardware. Inference, orchestration, and UI rendering could potentially coexist without competing across a bus. Asahi Linux is the likely OS path on Apple Silicon and should be tracked as it matures. This is not a commitment — it is an acknowledgment that the hardware curve may deliver a viable single-host platform sooner than expected.
+
+**Second candidate (added 2026-07-08):** NVIDIA's RTX Spark platform — announced at Computex 2026, shipping in laptops and compact desktops from major OEMs beginning fall 2026 — pairs a GB10-recipe Arm CPU with a Blackwell GPU and up to 128GB of unified LPDDR5X at roughly 300 GB/s, comparable in bandwidth to current Apple Pro-tier silicon. It launches positioned as a Windows-on-Arm platform, but NVIDIA's silicon has first-party Linux in its institutional DNA: DGX OS runs on the same GB10 architecture and NVIDIA's kernel modules are open source. Linux enablement on this hardware is a driver-engineering problem, not the reverse-engineering effort the Apple path requires. The decisive difference is CUDA. It unlocks vLLM-class serving — continuous batching, concurrent low-latency inference, the exact operating point named in the open questions below — and local fine-tuning of small purpose-built models. Single-stream generation should be comparable to Apple silicon, not faster; the win is concurrency, which is the workload an adaptive UI actually generates.
 
 ### Prototype Stack
 The following tools are used to develop and validate the architecture across multiple servers. They are reference implementations, not requirements. The architecture is the transferable asset — not the specific tools.
